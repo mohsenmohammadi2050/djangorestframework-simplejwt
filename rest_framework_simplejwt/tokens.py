@@ -197,7 +197,7 @@ class Token:
             raise TokenError(format_lazy(_("Token '{}' claim has expired"), claim))
 
     @classmethod
-    def for_user(cls, user: AuthUser) -> "Token":
+    def for_user(cls, user: AuthUser, additional_data=None) -> "Token":
         """
         Returns an authorization token for the given user that will be provided
         after authenticating the user's credentials.
@@ -213,7 +213,9 @@ class Token:
             token[api_settings.REVOKE_TOKEN_CLAIM] = get_md5_hash_password(
                 user.password
             )
-
+        if additional_data:
+            for key, value in additional_data.items():
+                token[key] = value
         return token
 
     _token_backend: Optional["TokenBackend"] = None
